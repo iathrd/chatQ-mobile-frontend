@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {Form, Item, Input, Button} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import action from '../redux/actions/getmessage';
 import {useSelector, useDispatch} from 'react-redux';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
@@ -49,19 +48,16 @@ const Chat = ({data, route}) => {
 export default function ChatRoom({route}) {
   const dispatch = useDispatch();
   const [text, setText] = useState({content: '', isSubmit: false});
-  const [page, setPage] = useState(1);
-  // const message = useSelector((state) => state.getmessage.data);
   const token = useSelector((state) => state.auth.token);
   const datass = useSelector((state) => state.saveMessage.data);
 
+  const getData = async () => {
+    let message = await dispatch(getMessage.getMessage(token, route.params.id));
+    message = message.action.payload.data;
+    dispatch(saveMessageAction.saveMessage(message));
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      let message = await dispatch(
-        getMessage.getMessage(token, route.params.id),
-      );
-      message = message.action.payload.data;
-      dispatch(saveMessageAction.saveMessage(message));
-    };
     if (text.isSubmit) {
       getData();
       setText({content: ''});
@@ -79,7 +75,17 @@ export default function ChatRoom({route}) {
   };
 
   const nextPage = async () => {
-    setPage(page + 1);
+    const {nextLink} = datass.pageInfo;
+    if (nextLink) {
+      let load = await dispatch(getMessage.loadMessage(token, nextLink));
+      load = load.action.payload.data;
+      const newData = {
+        ...datass,
+        data: [...datass.data, ...load.data],
+        pageInfo: {...load.pageInfo},
+      };
+      dispatch(saveMessageAction.saveMessage(newData));
+    }
   };
 
   return (
@@ -92,8 +98,8 @@ export default function ChatRoom({route}) {
             <FlatList
               inverted
               data={datass.data.length && datass.data}
-              // onEndReached={nextPage}
-              // onEndReachedThreshold={0.5}
+              onEndReached={nextPage}
+              onEndReachedThreshold={0.5}
               renderItem={({item}) => <Chat data={item} route={route} />}
               keyExtractor={(item) => item.id.toString()}
             />
