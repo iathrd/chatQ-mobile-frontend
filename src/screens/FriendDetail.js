@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, Switch} from 'react-native';
 import {Container, Content} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {API_URL} from '@env';
 
 export default function FriendDetail({route}) {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -12,7 +13,7 @@ export default function FriendDetail({route}) {
         <View style={styles.imagerapper}>
           <Image
             style={styles.image}
-            source={require('../assets/img/default_user.png')}
+            source={{uri: `${API_URL}${route.params.data.avatarw}`}}
           />
         </View>
         <View style={styles.content1}>
