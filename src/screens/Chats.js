@@ -5,42 +5,91 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
-  TouchableHighlight,
+  TouchableOpacity,
 } from 'react-native';
 import {Thumbnail} from 'native-base';
 import {useSelector, useDispatch} from 'react-redux';
 import action from '../redux/actions/getchat';
 import jwt from 'jwt-decode';
+import getMessage from '../redux/actions/getmessage';
+import saveMessageAction from '../redux/actions/saveMessage';
+import {API_URL} from '@env';
+import moment from 'moment';
 
 const ChatView = ({data, navigation, user}) => {
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+  const coba = useSelector((state) => state.saveMessage.data.data);
+
+  const moveScreen = async (id) => {
+    let curentId = 0;
+    if (coba.length) {
+      const {senderId, recipientId} = coba[0];
+      curentId = `${senderId !== +user ? senderId : recipientId}`;
+    }
+    if (curentId !== id) {
+      let message = await dispatch(getMessage.getMessage(token, id));
+      message = message.action.payload.data;
+      dispatch(saveMessageAction.saveMessage(message));
+      navigation.navigate('ChatRoom', {
+        id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
+        user: {user: user},
+        data: {
+          username: `${
+            data.senderId !== +user
+              ? data.sender.username
+              : data.recipient.username
+          }`,
+          avatar: `${
+            data.senderId !== +user ? data.sender.avatar : data.recipient.avatar
+          }`,
+          phoneNumber: `${
+            data.senderId !== +user
+              ? data.sender.phoneNumber
+              : data.recipient.phoneNumber
+          }`,
+        },
+      });
+    } else {
+      navigation.navigate('ChatRoom', {
+        id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
+        user: {user: user},
+        data: {
+          username: `${
+            data.senderId !== +user
+              ? data.sender.username
+              : data.recipient.username
+          }`,
+          avatar: `${
+            data.senderId !== +user ? data.sender.avatar : data.recipient.avatar
+          }`,
+          phoneNumber: `${
+            data.senderId !== +user
+              ? data.sender.phoneNumber
+              : data.recipient.phoneNumber
+          }`,
+        },
+      });
+    }
+  };
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       onPress={() =>
-        navigation.navigate('ChatRoom', {
-          id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
-          user: user,
-          data: {
-            username: `${
-              data.senderId !== +user
-                ? data.sender.username
-                : data.recipient.username
-            }`,
-            avatar: `${
-              data.senderId !== +user
-                ? data.sender.avatar
-                : data.recipient.avatar
-            }`,
-            phoneNumber: `${
-              data.senderId !== +user
-                ? data.sender.phoneNumber
-                : data.recipient.phoneNumber
-            }`,
-          },
-        })
+        moveScreen(
+          `${data.senderId !== +user ? data.senderId : data.recipientId}`,
+        )
       }>
       <View style={styles.viewContainer}>
         <View style={styles.contentDisplay}>
-          <Thumbnail source={require('../assets/img/default_user.png')} />
+          <Thumbnail
+            source={{
+              uri: `${API_URL}${
+                data.senderId !== +user
+                  ? data.sender.avatar
+                  : data.recipient.avatar
+              }`,
+            }}
+          />
           <View style={styles.contentText}>
             <View style={styles.userInfo}>
               <Text numberOfLines={1} style={styles.userName}>
@@ -48,7 +97,9 @@ const ChatView = ({data, navigation, user}) => {
                   ? data.sender.username
                   : data.recipient.username}
               </Text>
-              <Text style={styles.date}>12-01-2019</Text>
+              <Text style={styles.date}>
+                {moment(data.createdAt).format('MM/DD/YY')}
+              </Text>
             </View>
             <Text numberOfLines={1} style={styles.chat}>
               {data.content}
@@ -56,7 +107,7 @@ const ChatView = ({data, navigation, user}) => {
           </View>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 
@@ -75,6 +126,7 @@ export default function Chats({navigation}) {
         renderItem={({item}) => (
           <ChatView data={item} navigation={navigation} user={user.aud} />
         )}
+        keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
   );
