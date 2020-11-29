@@ -96,7 +96,10 @@ const ChatView = ({data, navigation, user}) => {
                   : data.recipient.username}
               </Text>
               <Text style={styles.date}>
-                {moment(data.createdAt).format('MM/DD/YY')}
+                {moment().format('MM/DD/YY') !==
+                moment(data.createdAt).format('MM/DD/YY')
+                  ? moment(data.createdAt).format('MM/DD/YY')
+                  : moment(data.createdAt).format('h:mm a')}
               </Text>
             </View>
             <Text numberOfLines={1} style={styles.chat}>
