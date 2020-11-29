@@ -13,15 +13,18 @@ import action from '../redux/actions/getmessage';
 import {useSelector, useDispatch} from 'react-redux';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
+import moment from 'moment';
 
 import sendMessageAction from '../redux/actions/sendmessage';
+import getMessage from '../redux/actions/getmessage';
+import saveMessageAction from '../redux/actions/saveMessage';
 
 const Chat = ({data, route}) => {
   return (
     <View style={styles.chatView}>
       <View
         style={
-          data.senderId === +route.params.user
+          data.senderId === +route.params.user.user
             ? styles.boxUser
             : styles.boxFriend
         }>
@@ -29,8 +32,10 @@ const Chat = ({data, route}) => {
           <Text style={styles.textChat}>{data.content}</Text>
         </View>
         <View style={styles.timeView}>
-          <Text style={styles.textTime}>19.04</Text>
-          {data.senderId === +route.params.user ? (
+          <Text style={styles.textTime}>
+            {moment(data.createdAt).format('h:mm')}
+          </Text>
+          {data.senderId === +route.params.user.user ? (
             <Icon name="check-all" size={16} color="#9b9b9b" />
           ) : (
             <Text> </Text>
@@ -44,27 +49,31 @@ const Chat = ({data, route}) => {
 export default function ChatRoom({route}) {
   const dispatch = useDispatch();
   const [text, setText] = useState({content: '', isSubmit: false});
-  const [data, setData] = useState({data: [], pageInfo: {}});
   const [page, setPage] = useState(1);
-  const message = useSelector((state) => state.getmessage.data);
+  // const message = useSelector((state) => state.getmessage.data);
   const token = useSelector((state) => state.auth.token);
+  const datass = useSelector((state) => state.saveMessage.data);
 
   useEffect(() => {
-    dispatch(action.getMessage(token, route.params.id, page));
-    // const newData = {
-    //   ...data,
-    //   data: message.data,
-    //   pageInfo: message.pageInfo,
-    // };
-    // setData({data: message.data, pageInfo: message.pageInfo});
-    setText({content: ''});
+    const getData = async () => {
+      let message = await dispatch(
+        getMessage.getMessage(token, route.params.id),
+      );
+      message = message.action.payload.data;
+      dispatch(saveMessageAction.saveMessage(message));
+    };
+    if (text.isSubmit) {
+      getData();
+      setText({content: ''});
+    }
   }, [text.isSubmit]);
 
-  const sendMessages = () => {
+  const sendMessages = async () => {
     const datas = {
       content: text.content,
       recipientId: route.params.id,
     };
+
     dispatch(sendMessageAction.sendMessage(token, datas));
     setText({isSubmit: true});
   };
@@ -82,10 +91,11 @@ export default function ChatRoom({route}) {
           <SafeAreaView style={styles.saveArea}>
             <FlatList
               inverted
-              data={message.length && message}
+              data={datass.data.length && datass.data}
               // onEndReached={nextPage}
               // onEndReachedThreshold={0.5}
               renderItem={({item}) => <Chat data={item} route={route} />}
+              keyExtractor={(item) => item.id.toString()}
             />
             <View style={styles.formWrapper}>
               <Form>
