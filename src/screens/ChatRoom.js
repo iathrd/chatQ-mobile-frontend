@@ -32,7 +32,7 @@ const Chat = ({data, route}) => {
         </View>
         <View style={styles.timeView}>
           <Text style={styles.textTime}>
-            {moment(data.createdAt).format('h:mm')}
+            {moment(data.createdAt).format('h:mm a')}
           </Text>
           {data.senderId === +route.params.user.user ? (
             <Icon name="check-all" size={16} color="#9b9b9b" />
