@@ -1,7 +1,7 @@
 const initialState = {
-  data: [],
-  pageInfo: {},
+  data: {},
   isLoading: false,
+  loadData: {},
   isError: false,
   alertMsg: '',
 };
@@ -20,8 +20,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        data: action.payload.data.data,
-        pageInfo: action.payload.data.pageInfo,
+        data: action.payload.data,
         isError: false,
       };
     }
@@ -32,6 +31,40 @@ export default (state = initialState, action) => {
         alertMsg: '',
       };
     }
+
+    case 'LOAD_CHAT_PENDING': {
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+        alertMsg: 'Login ...',
+      };
+    }
+    case 'LOAD_CHAT_FULFILLED': {
+      return {
+        ...state,
+        isLoading: false,
+        loadData: action.payload.data,
+        isError: false,
+      };
+    }
+    case 'LOAD_CHAT_REJECTED': {
+      return {
+        ...state,
+        isError: true,
+        alertMsg: '',
+      };
+    }
+
+    case 'SAVE_CHAT': {
+      return {
+        ...state,
+        isLoading: false,
+        data: action.payload,
+        isError: false,
+      };
+    }
+
     default: {
       return state;
     }
