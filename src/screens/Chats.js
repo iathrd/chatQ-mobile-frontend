@@ -9,12 +9,15 @@ import {
 } from 'react-native';
 import {Thumbnail} from 'native-base';
 import {useSelector, useDispatch} from 'react-redux';
-import action from '../redux/actions/getchat';
 import jwt from 'jwt-decode';
-import getMessage from '../redux/actions/getmessage';
-import saveMessageAction from '../redux/actions/saveMessage';
 import {API_URL} from '@env';
 import moment from 'moment';
+
+// redux action
+import action from '../redux/actions/getchat';
+import getMessage from '../redux/actions/getmessage';
+import saveMessageAction from '../redux/actions/saveMessage';
+import loadDataAction from '../redux/actions/getchat';
 
 const ChatView = ({data, navigation, user}) => {
   const token = useSelector((state) => state.auth.token);
@@ -120,13 +123,32 @@ export default function Chats({navigation}) {
   useEffect(() => {
     dispatch(action.getChat(token));
   }, []);
+
+  const loadData = async () => {
+    const {nextLink} = chatList.pageInfo;
+    if (nextLink) {
+      let loadNewData = await dispatch(
+        loadDataAction.loadChat(token, nextLink),
+      );
+      loadNewData = loadNewData.action.payload.data;
+      const newData = {
+        ...chatList,
+        data: [...chatList.data, ...loadNewData.data],
+        pageInfo: {...loadNewData.pageInfo},
+      };
+      dispatch(loadDataAction.saveChat(newData));
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={chatList}
+        data={chatList.data}
         renderItem={({item}) => (
           <ChatView data={item} navigation={navigation} user={user.aud} />
         )}
+        onEndReached={loadData}
+        onEndReachedThreshold={0.5}
         keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
