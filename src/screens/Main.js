@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Thumbnail} from 'native-base';
 import {useSelector} from 'react-redux';
+import {API_URL} from '@env';
 
 // Screens
 import ChatRoom from '../screens/ChatRoom';
@@ -27,9 +28,10 @@ export default function Main({navigation}) {
     <NavigationContainer>
       {console.log(isLogin)}
       {!isLogin ? (
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{cardStyle: {backgroundColor: 'black'}}}>
           <Stack.Screen
-            options={{headerShown: false}}
+            options={{headerShown: false, cardStyle: {opacity: 1}}}
             name="landing"
             component={Landing}
           />
@@ -41,6 +43,7 @@ export default function Main({navigation}) {
               headerLeft: null,
               headerTitleStyle: {color: '#d2d2d8'},
               headerStyle: {elevation: 0, backgroundColor: '#101d25'},
+              cardStyle: {opacity: 1},
               headerRight: () => (
                 <Icon2
                   style={styles.icon}
@@ -59,6 +62,7 @@ export default function Main({navigation}) {
               headerTitleStyle: {color: '#d2d2d8'},
               headerStyle: {backgroundColor: '#232d36'},
               headerTintColor: 'grey',
+              cardStyle: {opacity: 1},
               headerRight: () => (
                 <Icon
                   style={styles.icon}
@@ -79,6 +83,7 @@ export default function Main({navigation}) {
               headerLeft: null,
               headerTitleStyle: {color: '#d2d2d8'},
               headerTitleAlign: 'center',
+              cardStyle: {opacity: 1},
               headerRight: () => (
                 <Icon2
                   style={styles.icon}
@@ -99,6 +104,7 @@ export default function Main({navigation}) {
               headerStyle: {
                 backgroundColor: '#101d25',
               },
+              cardStyle: {opacity: 1},
             }}
             name="SetProfile"
             component={SetProfile}
@@ -115,6 +121,7 @@ export default function Main({navigation}) {
                 color: '#9b9b9b',
                 fontSize: 25,
               },
+              cardStyle: {opacity: 1},
               headerRight: ({size, color, focused}) => (
                 <View style={styles.iconView}>
                   <Icon
@@ -136,6 +143,7 @@ export default function Main({navigation}) {
           <Stack.Screen
             options={({navigation, route}) => ({
               title: null,
+              cardStyle: {opacity: 1},
               headerLeft: () => (
                 <View style={styles.chatRoomWrapper}>
                   <TouchableOpacity onPress={() => navigation.popToTop()}>
@@ -150,7 +158,7 @@ export default function Main({navigation}) {
                     }>
                     <Thumbnail
                       small
-                      source={require('../assets/img/default_user.png')}
+                      source={{uri: `${API_URL}${route.params.data.avatar}`}}
                     />
                     <View style={styles.userInfo}>
                       <Text style={styles.textUser}>
@@ -180,6 +188,7 @@ export default function Main({navigation}) {
             options={({route, navigation}) => ({
               headerStyle: {backgroundColor: '#27343c'},
               title: null,
+              cardStyle: {opacity: 1},
               headerLeft: () => (
                 <View style={styles.headerFriendInfo}>
                   <TouchableOpacity
@@ -189,7 +198,6 @@ export default function Main({navigation}) {
                     }>
                     <Icon2 name="arrow-left" size={30} color="white" />
                   </TouchableOpacity>
-                  {console.log('form Firend', route.params.data.username)}
                   <View style={styles.firendInfoWrapper}>
                     <Text style={styles.textUser}>
                       {route.params.data.username}
@@ -215,6 +223,7 @@ export default function Main({navigation}) {
           <Stack.Screen
             options={({navigation}) => ({
               title: 'Profile',
+              cardStyle: {opacity: 1},
               headerStyle: {backgroundColor: '#27343c'},
               headerTitleStyle: {color: 'white'},
               headerTintColor: '#9b9b9b',
