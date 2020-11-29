@@ -1,8 +1,12 @@
 import http from '../../helpers/http';
 
 export default {
-  getMessage: (token, id, page) => ({
+  getMessage: (token, id) => ({
     type: 'GET_MESSAGE',
-    payload: http(token).get(`message/chatRoom/${id}`, {params: {page: page}}),
+    payload: http(token).get(`message/chatRoom/${id}`),
+  }),
+  loadMessage: (token, link) => ({
+    type: 'LOAD_MESSAGE',
+    payload: http(token).get(link),
   }),
 };
