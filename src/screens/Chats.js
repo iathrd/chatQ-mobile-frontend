@@ -19,58 +19,56 @@ import moment from 'moment';
 const ChatView = ({data, navigation, user}) => {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
-  const coba = useSelector((state) => state.saveMessage.data.data);
 
   const moveScreen = async (id) => {
-    let curentId = 0;
-    if (coba.length) {
-      const {senderId, recipientId} = coba[0];
-      curentId = `${senderId !== +user ? senderId : recipientId}`;
-    }
-    if (curentId !== id) {
-      let message = await dispatch(getMessage.getMessage(token, id));
-      message = message.action.payload.data;
-      dispatch(saveMessageAction.saveMessage(message));
-      navigation.navigate('ChatRoom', {
-        id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
-        user: {user: user},
-        data: {
-          username: `${
-            data.senderId !== +user
-              ? data.sender.username
-              : data.recipient.username
-          }`,
-          avatar: `${
-            data.senderId !== +user ? data.sender.avatar : data.recipient.avatar
-          }`,
-          phoneNumber: `${
-            data.senderId !== +user
-              ? data.sender.phoneNumber
-              : data.recipient.phoneNumber
-          }`,
-        },
-      });
-    } else {
-      navigation.navigate('ChatRoom', {
-        id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
-        user: {user: user},
-        data: {
-          username: `${
-            data.senderId !== +user
-              ? data.sender.username
-              : data.recipient.username
-          }`,
-          avatar: `${
-            data.senderId !== +user ? data.sender.avatar : data.recipient.avatar
-          }`,
-          phoneNumber: `${
-            data.senderId !== +user
-              ? data.sender.phoneNumber
-              : data.recipient.phoneNumber
-          }`,
-        },
-      });
-    }
+    // if (coba.length) {
+    //   const {senderId, recipientId} = coba[0];
+    //   curentId = `${senderId !== +user ? senderId : recipientId}`;
+    // }
+    // if (curentId !== id) {
+    let message = await dispatch(getMessage.getMessage(token, id));
+    message = message.action.payload.data;
+    dispatch(saveMessageAction.saveMessage(message));
+    navigation.navigate('ChatRoom', {
+      id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
+      user: {user: user},
+      data: {
+        username: `${
+          data.senderId !== +user
+            ? data.sender.username
+            : data.recipient.username
+        }`,
+        avatar: `${
+          data.senderId !== +user ? data.sender.avatar : data.recipient.avatar
+        }`,
+        phoneNumber: `${
+          data.senderId !== +user
+            ? data.sender.phoneNumber
+            : data.recipient.phoneNumber
+        }`,
+      },
+    });
+    // } else {
+    //   navigation.navigate('ChatRoom', {
+    //     id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
+    //     user: {user: user},
+    //     data: {
+    //       username: `${
+    //         data.senderId !== +user
+    //           ? data.sender.username
+    //           : data.recipient.username
+    //       }`,
+    //       avatar: `${
+    //         data.senderId !== +user ? data.sender.avatar : data.recipient.avatar
+    //       }`,
+    //       phoneNumber: `${
+    //         data.senderId !== +user
+    //           ? data.sender.phoneNumber
+    //           : data.recipient.phoneNumber
+    //       }`,
+    //     },
+    //   });
+    // }
   };
   return (
     <TouchableOpacity
