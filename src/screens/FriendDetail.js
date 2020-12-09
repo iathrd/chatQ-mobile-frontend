@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, Switch} from 'react-native';
 import {Container, Content} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon2 from 'react-native-vector-icons/Fontisto';
 import {API_URL} from '@env';
 
 export default function FriendDetail({route}) {
@@ -62,6 +63,18 @@ export default function FriendDetail({route}) {
             <Icon name="message-reply-text" color="#00b09c" size={25} />
           </View>
         </View>
+        <View style={styles.content1}>
+          <View style={styles.dangerView}>
+            <Icon name="block-helper" color="rgba(239,105,124,0.7)" size={20} />
+            <Text style={styles.textDanger}>Blok</Text>
+          </View>
+        </View>
+        <View style={styles.content1}>
+          <View style={styles.dangerView}>
+            <Icon2 name="dislike" color="rgba(239,105,124,0.7)" size={20} />
+            <Text style={styles.textDanger}>Report contact</Text>
+          </View>
+        </View>
       </Content>
     </Container>
   );
@@ -85,7 +98,7 @@ const styles = StyleSheet.create({
   },
   text1: {
     color: '#d2d2d8',
-    fontSize: 20,
+    fontSize: 18,
   },
   content1: {
     backgroundColor: '#101d25',
@@ -97,7 +110,7 @@ const styles = StyleSheet.create({
   content11: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderBottomColor: '#9b9b9b',
+    borderBottomColor: 'rgba(155,155,155,0.5)',
     borderBottomWidth: 0.5,
     paddingBottom: 20,
     paddingTop: 20,
@@ -126,10 +139,10 @@ const styles = StyleSheet.create({
   },
   colorText: {
     color: '#00b09c',
-    fontSize: 19,
+    fontSize: 17,
   },
   statusWrapper: {
-    borderBottomColor: '#9b9b9b',
+    borderBottomColor: 'rgba(155,155,155,0.5)',
     borderBottomWidth: 0.5,
     paddingTop: 10,
     paddingBottom: 10,
@@ -138,5 +151,16 @@ const styles = StyleSheet.create({
   phoneWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  dangerView: {
+    flexDirection: 'row',
+    paddingBottom: 20,
+    paddingTop: 20,
+    alignItems: 'center',
+  },
+  textDanger: {
+    color: 'rgba(239,105,124,0.7)',
+    fontSize: 20,
+    marginLeft: 20,
   },
 });
