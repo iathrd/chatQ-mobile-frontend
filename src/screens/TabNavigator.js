@@ -10,7 +10,7 @@ export const MainTab = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        style: {backgroundColor: '#191f1a'},
+        style: {backgroundColor: '#27343c'},
         activeTintColor: '#25D366',
         inactiveTintColor: '#9b9b9b',
         indicatorStyle: {backgroundColor: '#25D366'},

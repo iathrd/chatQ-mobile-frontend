@@ -18,6 +18,7 @@ import action from '../redux/actions/getchat';
 import getMessage from '../redux/actions/getmessage';
 import saveMessageAction from '../redux/actions/saveMessage';
 import loadDataAction from '../redux/actions/getchat';
+import userInfoAction from '../redux/actions/userInfo';
 
 const ChatView = ({data, navigation, user}) => {
   const token = useSelector((state) => state.auth.token);
@@ -79,7 +80,8 @@ const ChatView = ({data, navigation, user}) => {
         moveScreen(
           `${data.senderId !== +user ? data.senderId : data.recipientId}`,
         )
-      }>
+      }
+      style={styles.chatContent}>
       <View style={styles.viewContainer}>
         <View style={styles.contentDisplay}>
           <Thumbnail
@@ -121,7 +123,30 @@ export default function Chats({navigation}) {
   const token = useSelector((state) => state.auth.token);
   const user = jwt(token);
   useEffect(() => {
-    dispatch(action.getChat(token));
+    const getChatData = async () => {
+      await dispatch(action.getChat(token));
+    };
+    getChatData();
+    const info = chatList.data[0];
+    const userInfo = {
+      id: `${info.senderId === +user ? info.senderId : info.recipientId}`,
+      data: {
+        username: `${
+          info.senderId === +user
+            ? info.sender.username
+            : info.recipient.username
+        }`,
+        avatar: `${
+          info.senderId === +user ? info.sender.avatar : info.recipient.avatar
+        }`,
+        phoneNumber: `${
+          info.senderId === +user
+            ? info.sender.phoneNumber
+            : info.recipient.phoneNumber
+        }`,
+      },
+    };
+    dispatch(userInfoAction.saveUser(userInfo));
   }, []);
 
   const loadData = async () => {
@@ -142,6 +167,18 @@ export default function Chats({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* <ToolbarAndroid
+        logo={require('../assets/img/default_user.png')}
+        title="AwesomeApp"
+        actions={[
+          {
+            title: 'Settings',
+            icon: require('../assets/img/default_user.png'),
+            show: 'always',
+          },
+        ]}
+        onActionSelected={this.onActionSelected}
+      /> */}
       <FlatList
         data={chatList.data}
         renderItem={({item}) => (
@@ -158,22 +195,21 @@ export default function Chats({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
-    paddingLeft: 16,
-    paddingRight: 16,
+    backgroundColor: '#101d25',
   },
   viewContainer: {
     marginTop: 10,
+    backgroundColor: '#101d25',
   },
   contentDisplay: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#101d25',
   },
   contentText: {
-    borderBottomColor: '#9b9b9b',
-    borderStyle: 'solid',
-    borderWidth: 0.3,
+    borderBottomColor: 'rgba(155,155,155,0.4)',
+    borderBottomWidth: 0.3,
     flexGrow: 1,
     flexDirection: 'column',
     paddingBottom: 10,
@@ -198,5 +234,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 5,
     width: 236,
+  },
+  chatContent: {
+    paddingLeft: 16,
+    paddingRight: 16,
   },
 });

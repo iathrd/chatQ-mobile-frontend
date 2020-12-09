@@ -19,6 +19,7 @@ import Otp from './Otp';
 import SetProfile from './SetProfile';
 import FriendDetail from './FriendDetail';
 import Profile from './Profile';
+import Settings from './Settings';
 
 const Stack = createStackNavigator();
 
@@ -60,7 +61,7 @@ export default function Main({navigation}) {
             options={{
               title: 'Choose a country',
               headerTitleStyle: {color: '#d2d2d8'},
-              headerStyle: {backgroundColor: '#232d36'},
+              headerStyle: {backgroundColor: '#27343c'},
               headerTintColor: 'grey',
               cardStyle: {opacity: 1},
               headerRight: () => (
@@ -79,7 +80,7 @@ export default function Main({navigation}) {
             name="OTP"
             options={({route}) => ({
               title: route.params.data,
-              headerStyle: {backgroundColor: '#101d25'},
+              headerStyle: {backgroundColor: '#27343c'},
               headerLeft: null,
               headerTitleStyle: {color: '#d2d2d8'},
               headerTitleAlign: 'center',
@@ -101,9 +102,7 @@ export default function Main({navigation}) {
               headerLeft: null,
               headerTintColor: '#d2d2d8',
               headerTitleAlign: 'center',
-              headerStyle: {
-                backgroundColor: '#101d25',
-              },
+              headerStyle: {backgroundColor: '#27343c'},
               cardStyle: {opacity: 1},
             }}
             name="SetProfile"
@@ -114,7 +113,7 @@ export default function Main({navigation}) {
         <Stack.Navigator>
           <Stack.Screen
             options={({navigation}) => ({
-              headerStyle: {elevation: 0, backgroundColor: '#191f1a'},
+              headerStyle: {backgroundColor: '#27343c', elevation: 0},
               title: 'chatQ',
               headerTitleStyle: {
                 fontWeight: 'bold',
@@ -131,8 +130,8 @@ export default function Main({navigation}) {
                     size={25}
                   />
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Profile')}>
-                    <Icon2 name="dots-vertical" size={25} color="#9b9b9b" />
+                    onPress={() => navigation.navigate('Settings')}>
+                    <Icon name="settings" size={25} color="#9b9b9b" />
                   </TouchableOpacity>
                 </View>
               ),
@@ -141,13 +140,28 @@ export default function Main({navigation}) {
             component={MainTab}
           />
           <Stack.Screen
+            options={{
+              headerStyle: {backgroundColor: '#27343c'},
+              title: 'Settings',
+              headerTintColor: '#d2d2d8',
+            }}
+            name="Settings"
+            component={Settings}
+          />
+          <Stack.Screen
             options={({navigation, route}) => ({
               title: null,
               cardStyle: {opacity: 1},
               headerLeft: () => (
                 <View style={styles.chatRoomWrapper}>
-                  <TouchableOpacity onPress={() => navigation.popToTop()}>
+                  <TouchableOpacity
+                    style={styles.navigationFriend}
+                    onPress={() => navigation.popToTop()}>
                     <Icon2 name="arrow-left" size={30} color="white" />
+                    <Thumbnail
+                      small
+                      source={{uri: `${API_URL}${route.params.data.avatar}`}}
+                    />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.navigationFriend}
@@ -156,10 +170,6 @@ export default function Main({navigation}) {
                         data: route.params.data,
                       })
                     }>
-                    <Thumbnail
-                      small
-                      source={{uri: `${API_URL}${route.params.data.avatar}`}}
-                    />
                     <View style={styles.userInfo}>
                       <Text style={styles.textUser}>
                         {route.params.data.username}
@@ -225,8 +235,7 @@ export default function Main({navigation}) {
               title: 'Profile',
               cardStyle: {opacity: 1},
               headerStyle: {backgroundColor: '#27343c'},
-              headerTitleStyle: {color: 'white'},
-              headerTintColor: '#9b9b9b',
+              headerTintColor: '#d2d2d8',
             })}
             name="Profile"
             component={Profile}
@@ -241,6 +250,7 @@ const styles = StyleSheet.create({
   iconView: {
     display: 'flex',
     flexDirection: 'row',
+    marginRight: 16,
   },
   icon: {
     marginRight: 10,
