@@ -6,7 +6,8 @@ import getchat from './getchat';
 import getmessage from './getmessage';
 import sendmessage from './sendmessage';
 import getuser from './getuser';
-import saveMessage from './saveMessage'
+import saveMessage from './saveMessage';
+import userInfo from './userInfo';
 
 export default combineReducers({
   auth,
@@ -16,4 +17,5 @@ export default combineReducers({
   sendmessage,
   getuser,
   saveMessage,
+  userInfo,
 });
