@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     paddingRight: 5,
     marginBottom: 10,
-    maxWidth: 200,
+    maxWidth: '80%',
     flexDirection: 'row',
   },
   boxFriend: {
@@ -178,8 +178,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     paddingRight: 5,
-    marginBottom: 10,
-    maxWidth: 200,
+    maxWidth: '80%',
     flexDirection: 'row',
   },
   timeView: {
