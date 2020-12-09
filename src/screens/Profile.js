@@ -22,22 +22,57 @@ export default function Profile() {
   return (
     <>
       <View style={styles.parent}>
-        <Button
-          title="Open Bottom Sheet"
-          onPress={() => cobaSheet.current.open()}>
-          <Text>ppppp</Text>
-        </Button>
         <RBSheet
           ref={cobaSheet}
           height={300}
-          openDuration={250}
+          openDuration={500}
           customStyles={{
             container: {
-              justifyContent: 'center',
-              alignItems: 'center',
+              backgroundColor: '#101d25',
+              maxHeight: '25%',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+              paddingLeft: 30,
+              paddingTop: 20,
+              paddingRight: 30,
+              paddingBottom: 30,
             },
           }}>
-          <Text>PPPPPP</Text>
+          <View>
+            <View>
+              <Text style={styles.enterNameText}>Enter your name</Text>
+              <View>
+                <Form>
+                  <View style={styles.inputShip}>
+                    <Item style={styles.itemShip}>
+                      <Input
+                        autoFocus={true}
+                        style={styles.inputItem}
+                        value={user.username}
+                      />
+                      <Text style={styles.textLength}>12</Text>
+                    </Item>
+                    <View style={styles.iconShip}>
+                      <Icon name="emoticon" size={25} color="#9b9b9b" />
+                    </View>
+                  </View>
+                  <View>
+                    <View style={styles.btnShipWrapper}>
+                      <TouchableOpacity
+                        onPress={() => cobaSheet.current.close()}>
+                        <View style={styles.btnCancelView}>
+                          <Text style={styles.textBtnShip}>Cancel</Text>
+                        </View>
+                      </TouchableOpacity>
+                      <View>
+                        <Text style={styles.textBtnShip}>Save</Text>
+                      </View>
+                    </View>
+                  </View>
+                </Form>
+              </View>
+            </View>
+          </View>
         </RBSheet>
         <View style={styles.iamgeDisplay}>
           <View style={styles.avatarView}>
@@ -46,7 +81,7 @@ export default function Profile() {
               source={{uri: `${API_URL}${user.avatar}`}}
             />
             <View style={styles.btnWrapper}>
-              <TouchableOpacity onPress={}>
+              <TouchableOpacity>
                 <View style={styles.btnCamera}>
                   <Icon name="camera" color="white" size={30} />
                 </View>
@@ -56,7 +91,9 @@ export default function Profile() {
         </View>
         <View>
           <View style={styles.inputWrapper}>
-            <View style={styles.contentView}>
+            <TouchableOpacity
+              onPress={() => cobaSheet.current.open()}
+              style={styles.contentView}>
               <View style={styles.iconDisplay}>
                 <Icon name="account" size={30} color="#9b9b9b" />
               </View>
@@ -81,7 +118,7 @@ export default function Profile() {
                   </View>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.contentView}>
               <View style={styles.iconDisplay}>
@@ -216,5 +253,45 @@ const styles = StyleSheet.create({
   editNameView2: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  inputShip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemShip: {
+    marginLeft: 0,
+    paddingBottom: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: '#00b09c',
+    flex: 1,
+    marginRight: 20,
+  },
+  iconShip: {
+    marginTop: 15,
+  },
+  btnShipWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 20,
+  },
+  btnCancelView: {
+    marginRight: 50,
+  },
+  enterNameText: {
+    color: '#d2d2d8',
+    fontSize: 18,
+    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  inputItem: {
+    color: '#d2d2d8',
+  },
+  textLength: {
+    color: '#9b9b9b',
+  },
+  textBtnShip: {
+    color: '#00b09c',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
 });
