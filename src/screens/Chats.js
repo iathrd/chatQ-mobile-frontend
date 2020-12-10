@@ -7,11 +7,12 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {Thumbnail} from 'native-base';
+import {Thumbnail, Fab} from 'native-base';
 import {useSelector, useDispatch} from 'react-redux';
 import jwt from 'jwt-decode';
 import {API_URL} from '@env';
 import moment from 'moment';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // redux action
 import action from '../redux/actions/getchat';
@@ -167,7 +168,7 @@ export default function Chats({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <ToolbarAndroid
+         {/* <ToolbarAndroid
         logo={require('../assets/img/default_user.png')}
         title="AwesomeApp"
         actions={[
@@ -188,6 +189,13 @@ export default function Chats({navigation}) {
         onEndReachedThreshold={0.5}
         keyExtractor={(item) => item.id.toString()}
       />
+      <Fab
+        position="bottomRight"
+        style={{backgroundColor: '#00b09c'}}
+        onPress={() => navigation.navigate('Settings')}>
+        <Icon name="android-messages" size={35} />
+      </Fab>
+   
     </SafeAreaView>
   );
 }
