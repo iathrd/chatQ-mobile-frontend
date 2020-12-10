@@ -21,6 +21,37 @@ export default function Profile() {
   //   dispatch(action.getUser(token));
   // }, []);
 
+  const openGalery = () => {
+    const options = {
+      mediaType: 'photo',
+    };
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        console.log(response.uri);
+      }
+    });
+  };
+
+  const openCamera = () => {
+    const options = {
+      saveToPhotos: true,
+      mediaType:'photo',
+    };
+    launchCamera(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        console.log(response.uri);
+      }
+    });
+  };
+
   return (
     <>
       <View style={styles.parent}>
@@ -95,7 +126,26 @@ export default function Profile() {
           <View>
             <View>
               <Text style={styles.enterNameText}>Profile photo</Text>
-              <View></View>
+              <View style={styles.imagePicker}>
+                <View style={styles.iconView}>
+                  <TouchableOpacity onPress={openGalery}>
+                    <Image
+                      style={styles.iconPicker2}
+                      source={require('../assets/img/galery.png')}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.textIcon}>Galery</Text>
+                </View>
+                <View style={styles.iconView}>
+                  <TouchableOpacity onPress={openCamera}>
+                    <Image
+                      style={styles.iconPicker}
+                      source={require('../assets/img/camera.png')}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.textIcon}>Camera</Text>
+                </View>
+              </View>
             </View>
           </View>
         </RBSheet>
@@ -318,5 +368,25 @@ const styles = StyleSheet.create({
     color: '#00b09c',
     fontSize: 15,
     fontWeight: 'bold',
+  },
+  imagePicker: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconView: {
+    alignItems: 'center',
+    marginLeft: 25,
+  },
+  iconPicker: {
+    height: 50,
+    width: 50,
+  },
+  textIcon: {
+    color: '#9b9b9b',
+    fontSize: 16,
+  },
+  iconPicker2: {
+    height: 50,
+    width: 54,
   },
 });
