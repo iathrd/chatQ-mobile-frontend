@@ -20,6 +20,7 @@ import SetProfile from './SetProfile';
 import FriendDetail from './FriendDetail';
 import Profile from './Profile';
 import Settings from './Settings';
+import Contact from './Contact';
 
 const Stack = createStackNavigator();
 
@@ -139,6 +140,7 @@ export default function Main({navigation}) {
             name="Chats"
             component={MainTab}
           />
+          <Stack.Screen name="Contact" component={Contact} />
           <Stack.Screen
             options={{
               headerStyle: {backgroundColor: '#27343c'},

@@ -13,6 +13,7 @@ import jwt from 'jwt-decode';
 import {API_URL} from '@env';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import socket from '../helpers/socket';
 
 // redux action
 import action from '../redux/actions/getchat';
@@ -125,7 +126,13 @@ export default function Chats({navigation}) {
   const user = jwt(token);
   useEffect(() => {
     const getChatData = async () => {
-      await dispatch(action.getChat(token));
+      dispatch(action.getChat(token));
+      socket.on(token, () => {
+        dispatch(action.getChat(token));
+      });
+      return () => {
+        socket.close();
+      };
     };
     getChatData();
     const info = chatList.data[0];
@@ -168,7 +175,7 @@ export default function Chats({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-         {/* <ToolbarAndroid
+      {/* <ToolbarAndroid
         logo={require('../assets/img/default_user.png')}
         title="AwesomeApp"
         actions={[
@@ -192,10 +199,9 @@ export default function Chats({navigation}) {
       <Fab
         position="bottomRight"
         style={{backgroundColor: '#00b09c'}}
-        onPress={() => navigation.navigate('Settings')}>
+        onPress={() => navigation.navigate('Contact ')}>
         <Icon name="android-messages" size={35} />
       </Fab>
-   
     </SafeAreaView>
   );
 }
