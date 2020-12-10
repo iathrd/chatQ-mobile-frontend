@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {Form, Item, Input, Button} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import action from '../redux/actions/getuser';
 import {API_URL} from '@env';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -13,7 +14,8 @@ export default function Profile() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
   const user = useSelector((state) => state.userInfo.data.data);
-  const cobaSheet = useRef();
+  const nameSheet = useRef();
+  const imageSheet = useRef();
 
   // useEffect(() => {
   //   dispatch(action.getUser(token));
@@ -23,7 +25,7 @@ export default function Profile() {
     <>
       <View style={styles.parent}>
         <RBSheet
-          ref={cobaSheet}
+          ref={nameSheet}
           height={300}
           openDuration={500}
           customStyles={{
@@ -59,7 +61,7 @@ export default function Profile() {
                   <View>
                     <View style={styles.btnShipWrapper}>
                       <TouchableOpacity
-                        onPress={() => cobaSheet.current.close()}>
+                        onPress={() => nameSheet.current.close()}>
                         <View style={styles.btnCancelView}>
                           <Text style={styles.textBtnShip}>Cancel</Text>
                         </View>
@@ -74,6 +76,29 @@ export default function Profile() {
             </View>
           </View>
         </RBSheet>
+        <RBSheet
+          ref={imageSheet}
+          height={300}
+          openDuration={500}
+          customStyles={{
+            container: {
+              backgroundColor: '#101d25',
+              maxHeight: '25%',
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+              paddingLeft: 30,
+              paddingTop: 20,
+              paddingRight: 30,
+              paddingBottom: 30,
+            },
+          }}>
+          <View>
+            <View>
+              <Text style={styles.enterNameText}>Profile photo</Text>
+              <View></View>
+            </View>
+          </View>
+        </RBSheet>
         <View style={styles.iamgeDisplay}>
           <View style={styles.avatarView}>
             <Image
@@ -81,7 +106,7 @@ export default function Profile() {
               source={{uri: `${API_URL}${user.avatar}`}}
             />
             <View style={styles.btnWrapper}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => imageSheet.current.open()}>
                 <View style={styles.btnCamera}>
                   <Icon name="camera" color="white" size={30} />
                 </View>
@@ -92,7 +117,7 @@ export default function Profile() {
         <View>
           <View style={styles.inputWrapper}>
             <TouchableOpacity
-              onPress={() => cobaSheet.current.open()}
+              onPress={() => nameSheet.current.open()}
               style={styles.contentView}>
               <View style={styles.iconDisplay}>
                 <Icon name="account" size={30} color="#9b9b9b" />
