@@ -127,7 +127,7 @@ export default function Chats({navigation}) {
   useEffect(() => {
     const getChatData = async () => {
       dispatch(action.getChat(token));
-      socket.on(token, () => {
+      socket.on(user.aud, () => {
         dispatch(action.getChat(token));
       });
       return () => {

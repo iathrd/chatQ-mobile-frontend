@@ -13,6 +13,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
+import socket from '../helpers/socket';
+import jwt from 'jwt-decode';
 
 import sendMessageAction from '../redux/actions/sendmessage';
 import getMessage from '../redux/actions/getmessage';
@@ -50,6 +52,7 @@ export default function ChatRoom({route}) {
   const [text, setText] = useState({content: '', isSubmit: false});
   const token = useSelector((state) => state.auth.token);
   const datass = useSelector((state) => state.saveMessage.data);
+  const user = jwt(token);
 
   const getData = async () => {
     let message = await dispatch(getMessage.getMessage(token, route.params.id));
@@ -58,10 +61,17 @@ export default function ChatRoom({route}) {
   };
 
   useEffect(() => {
+    socket.on(user.aud, () => {
+      getData();
+    });
+
     if (text.isSubmit) {
       getData();
       setText({content: ''});
     }
+    return () => {
+      socket.close();
+    };
   }, [text.isSubmit]);
 
   const sendMessages = async () => {
