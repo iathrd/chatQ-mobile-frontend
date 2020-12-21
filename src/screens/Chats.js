@@ -6,8 +6,9 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
-import {Thumbnail, Fab} from 'native-base';
+import {Thumbnail, Fab, Spinner} from 'native-base';
 import {useSelector, useDispatch} from 'react-redux';
 import jwt from 'jwt-decode';
 import {API_URL} from '@env';
@@ -21,17 +22,13 @@ import getMessage from '../redux/actions/getmessage';
 import saveMessageAction from '../redux/actions/saveMessage';
 import loadDataAction from '../redux/actions/getchat';
 import userInfoAction from '../redux/actions/userInfo';
+import getUserAction from '../redux/actions/getuser';
 
 const ChatView = ({data, navigation, user}) => {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
   const moveScreen = async (id) => {
-    // if (coba.length) {
-    //   const {senderId, recipientId} = coba[0];
-    //   curentId = `${senderId !== +user ? senderId : recipientId}`;
-    // }
-    // if (curentId !== id) {
     let message = await dispatch(getMessage.getMessage(token, id));
     message = message.action.payload.data;
     dispatch(saveMessageAction.saveMessage(message));
@@ -54,27 +51,6 @@ const ChatView = ({data, navigation, user}) => {
         }`,
       },
     });
-    // } else {
-    //   navigation.navigate('ChatRoom', {
-    //     id: `${data.senderId !== +user ? data.senderId : data.recipientId}`,
-    //     user: {user: user},
-    //     data: {
-    //       username: `${
-    //         data.senderId !== +user
-    //           ? data.sender.username
-    //           : data.recipient.username
-    //       }`,
-    //       avatar: `${
-    //         data.senderId !== +user ? data.sender.avatar : data.recipient.avatar
-    //       }`,
-    //       phoneNumber: `${
-    //         data.senderId !== +user
-    //           ? data.sender.phoneNumber
-    //           : data.recipient.phoneNumber
-    //       }`,
-    //     },
-    //   });
-    // }
   };
   return (
     <TouchableOpacity
@@ -123,39 +99,27 @@ export default function Chats({navigation}) {
   const dispatch = useDispatch();
   const chatList = useSelector((state) => state.getchat.data);
   const token = useSelector((state) => state.auth.token);
+  const isLoading = useSelector((state) => state.getchat.isLoading);
+  const getUser = useSelector((state) => state.getuser);
+
   const user = jwt(token);
   useEffect(() => {
     const getChatData = async () => {
       dispatch(action.getChat(token));
-      socket.on(user.aud, () => {
+      socket.on(user.aud, ({senderId, message, recipientId}) => {
+        getData(senderId);
         dispatch(action.getChat(token));
       });
-      return () => {
-        socket.close();
-      };
     };
     getChatData();
-    const info = chatList.data[0];
-    const userInfo = {
-      id: `${info.senderId === +user ? info.senderId : info.recipientId}`,
-      data: {
-        username: `${
-          info.senderId === +user
-            ? info.sender.username
-            : info.recipient.username
-        }`,
-        avatar: `${
-          info.senderId === +user ? info.sender.avatar : info.recipient.avatar
-        }`,
-        phoneNumber: `${
-          info.senderId === +user
-            ? info.sender.phoneNumber
-            : info.recipient.phoneNumber
-        }`,
-      },
-    };
-    dispatch(userInfoAction.saveUser(userInfo));
+    dispatch(getUserAction.getUsers(token));
   }, []);
+
+  const getData = async (recepientId) => {
+    let message = await dispatch(getMessage.getMessage(token, recepientId));
+    message = message.action.payload.data;
+    dispatch(saveMessageAction.saveMessage(message));
+  };
 
   const loadData = async () => {
     const {nextLink} = chatList.pageInfo;
@@ -175,18 +139,15 @@ export default function Chats({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <ToolbarAndroid
-        logo={require('../assets/img/default_user.png')}
-        title="AwesomeApp"
-        actions={[
-          {
-            title: 'Settings',
-            icon: require('../assets/img/default_user.png'),
-            show: 'always',
-          },
-        ]}
-        onActionSelected={this.onActionSelected}
-      /> */}
+      {isLoading ||
+        (getUser.isLoading && (
+          <Modal animationType="none" transparent={true}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>{/* <Spinner /> */}</View>
+            </View>
+          </Modal>
+        ))}
+      {}
       <FlatList
         data={chatList.data}
         renderItem={({item}) => (
@@ -199,7 +160,7 @@ export default function Chats({navigation}) {
       <Fab
         position="bottomRight"
         style={{backgroundColor: '#00b09c'}}
-        onPress={() => navigation.navigate('Contact ')}>
+        onPress={() => navigation.navigate('Contact')}>
         <Icon name="android-messages" size={35} />
       </Fab>
     </SafeAreaView>
@@ -252,5 +213,29 @@ const styles = StyleSheet.create({
   chatContent: {
     paddingLeft: 16,
     paddingRight: 16,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'transparent',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+  },
+  modal: {
+    backgroundColor: 'black',
   },
 });

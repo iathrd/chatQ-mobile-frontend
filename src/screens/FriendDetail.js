@@ -14,7 +14,7 @@ export default function FriendDetail({route}) {
         <View style={styles.imagerapper}>
           <Image
             style={styles.image}
-            source={{uri: `${API_URL}${route.params.data.avatarw}`}}
+            source={{uri: `${API_URL}${route.params.data.avatar}`}}
           />
         </View>
         <View style={styles.content1}>

@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import {Form, Item, Input, Button} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
@@ -7,21 +14,29 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import action from '../redux/actions/getuser';
 import {API_URL} from '@env';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {object} from 'yup';
+import getUserAction from '../redux/actions/getuser';
+import avatarAction from '../redux/actions/createprofile';
+import {Formik} from 'formik';
 
 export default function Profile() {
   const [username, setUsername] = useState('');
   const [phone, setPhone] = useState('');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
-  const user = useSelector((state) => state.userInfo.data.data);
+  const user = useSelector((state) => state.getuser.user);
+  const avatar = useSelector((state) => state.createprofile);
   const nameSheet = useRef();
   const imageSheet = useRef();
 
-  // useEffect(() => {
-  //   dispatch(action.getUser(token));
-  // }, []);
+  useEffect(() => {
+    if (avatar.isSuccess) {
+      dispatch(getUserAction.getUser(token));
+    }
+  }, [avatar.isSuccess]);
 
   const openGalery = () => {
+    imageSheet.current.close();
     const options = {
       mediaType: 'photo',
     };
@@ -31,7 +46,15 @@ export default function Profile() {
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
-        console.log(response.uri);
+        const form = new FormData();
+
+        form.append('picture', {
+          uri: response.uri,
+          name: response.fileName,
+          type: response.type,
+        });
+
+        dispatch(avatarAction.createAvatar(token, form));
       }
     });
   };
@@ -39,7 +62,7 @@ export default function Profile() {
   const openCamera = () => {
     const options = {
       saveToPhotos: true,
-      mediaType:'photo',
+      mediaType: 'photo',
     };
     launchCamera(options, (response) => {
       if (response.didCancel) {
@@ -52,8 +75,13 @@ export default function Profile() {
     });
   };
 
+  const handleSubmit = (values) => {
+    dispatch(avatarAction.createProfile(values.username, token));
+    nameSheet.current.close();
+  };
+
   return (
-    <>
+    <ScrollView style={{flex: 1}}>
       <View style={styles.parent}>
         <RBSheet
           ref={nameSheet}
@@ -75,34 +103,57 @@ export default function Profile() {
             <View>
               <Text style={styles.enterNameText}>Enter your name</Text>
               <View>
-                <Form>
-                  <View style={styles.inputShip}>
-                    <Item style={styles.itemShip}>
-                      <Input
-                        autoFocus={true}
-                        style={styles.inputItem}
-                        value={user.username}
-                      />
-                      <Text style={styles.textLength}>12</Text>
-                    </Item>
-                    <View style={styles.iconShip}>
-                      <Icon name="emoticon" size={25} color="#9b9b9b" />
-                    </View>
-                  </View>
-                  <View>
-                    <View style={styles.btnShipWrapper}>
-                      <TouchableOpacity
-                        onPress={() => nameSheet.current.close()}>
-                        <View style={styles.btnCancelView}>
-                          <Text style={styles.textBtnShip}>Cancel</Text>
+                <Formik
+                  style={styles.form}
+                  initialValues={{
+                    username: user.username,
+                  }}
+                  enableReinitialize
+                  onSubmit={(values) => {
+                    handleSubmit(values);
+                  }}>
+                  {({
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    values,
+                    errors,
+                    touched,
+                  }) => (
+                    <>
+                      <View style={styles.inputShip}>
+                        <Item style={styles.itemShip}>
+                          <Input
+                            autoFocus={true}
+                            style={styles.inputItem}
+                            value={values.username}
+                            onChangeText={handleChange('username')}
+                            onBlur={handleBlur('username')}
+                          />
+                          <Text style={styles.textLength}>12</Text>
+                        </Item>
+                        <View style={styles.iconShip}>
+                          <Icon name="emoticon" size={25} color="#9b9b9b" />
                         </View>
-                      </TouchableOpacity>
-                      <View>
-                        <Text style={styles.textBtnShip}>Save</Text>
                       </View>
-                    </View>
-                  </View>
-                </Form>
+                      <View>
+                        <View style={styles.btnShipWrapper}>
+                          <TouchableOpacity
+                            onPress={() => nameSheet.current.close()}>
+                            <View style={styles.btnCancelView}>
+                              <Text style={styles.textBtnShip}>Cancel</Text>
+                            </View>
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={handleSubmit}>
+                            <View>
+                              <Text style={styles.textBtnShip}>Save</Text>
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </>
+                  )}
+                </Formik>
               </View>
             </View>
           </View>
@@ -153,7 +204,11 @@ export default function Profile() {
           <View style={styles.avatarView}>
             <Image
               style={styles.image}
-              source={{uri: `${API_URL}${user.avatar}`}}
+              source={
+                user.avatar !== null
+                  ? {uri: `${API_URL}${user.avatar}`}
+                  : require('../assets/img/default_user.png')
+              }
             />
             <View style={styles.btnWrapper}>
               <TouchableOpacity onPress={() => imageSheet.current.open()}>
@@ -236,7 +291,7 @@ export default function Profile() {
           </View>
         </View>
       </View>
-    </>
+    </ScrollView>
   );
 }
 

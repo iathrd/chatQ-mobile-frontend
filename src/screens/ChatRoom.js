@@ -19,6 +19,7 @@ import jwt from 'jwt-decode';
 import sendMessageAction from '../redux/actions/sendmessage';
 import getMessage from '../redux/actions/getmessage';
 import saveMessageAction from '../redux/actions/saveMessage';
+import action from '../redux/actions/getchat';
 
 const Chat = ({data, route}) => {
   return (
@@ -52,6 +53,8 @@ export default function ChatRoom({route}) {
   const [text, setText] = useState({content: '', isSubmit: false});
   const token = useSelector((state) => state.auth.token);
   const datass = useSelector((state) => state.saveMessage.data);
+  const isSuccess = useSelector((state) => state.saveMessage.isSuccess);
+  const send = useSelector((state) => state.sendmessage.isSuccess);
   const user = jwt(token);
 
   const getData = async () => {
@@ -61,18 +64,22 @@ export default function ChatRoom({route}) {
   };
 
   useEffect(() => {
-    socket.on(user.aud, () => {
+    if (send) {
       getData();
-    });
-
-    if (text.isSubmit) {
-      getData();
+      dispatch(action.getChat(token));
       setText({content: ''});
     }
-    return () => {
-      socket.close();
-    };
-  }, [text.isSubmit]);
+    // else if (isSuccess) {
+    //   socket.on(user.aud, () => {
+    //     getData();
+    //     dispatch(action.getChat(token));
+    //   });
+    // socket.close();
+    // }
+    // return () => {
+    //
+    // };
+  }, [send]);
 
   const sendMessages = async () => {
     const datas = {
@@ -125,6 +132,7 @@ export default function ChatRoom({route}) {
                       placeholderTextColor="#9b9b9b"
                       onChangeText={(text) => setText({content: text})}
                       value={text.content}
+                      multiline
                     />
                     <Icon2
                       style={styles.iconPaper}
@@ -132,12 +140,20 @@ export default function ChatRoom({route}) {
                       size={25}
                       color="#9b9b9b"
                     />
-                    <Icon name="camera" size={25} color="#9b9b9b" />
+                    {!text.content && (
+                      <Icon name="camera" size={25} color="#9b9b9b" />
+                    )}
                   </Item>
                   <View>
-                    <Button onPress={sendMessages} style={styles.btnMic}>
-                      <Icon3 name={'send'} color="white" size={23} />
-                    </Button>
+                    {text.content ? (
+                      <Button onPress={sendMessages} style={styles.btnMic}>
+                        <Icon3 name="send" color="white" size={23} />
+                      </Button>
+                    ) : (
+                      <Button style={styles.btnMic}>
+                        <Icon3 name="mic" color="white" size={25} />
+                      </Button>
+                    )}
                   </View>
                 </View>
               </Form>
@@ -154,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   input: {
-    color: '#9b9b9b',
+    color: 'white',
   },
   content: {
     paddingLeft: 10,
@@ -240,7 +256,8 @@ const styles = StyleSheet.create({
   },
   formWrapper: {
     backgroundColor: 'transparent',
-    paddingBottom: 5,
+    paddingBottom: 10,
+    marginTop: 5,
   },
   iconPaper: {
     marginRight: 20,

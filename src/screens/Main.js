@@ -140,7 +140,15 @@ export default function Main({navigation}) {
             name="Chats"
             component={MainTab}
           />
-          <Stack.Screen name="Contact" component={Contact} />
+          <Stack.Screen
+            name="Contact"
+            options={{
+              title: 'Select Contact',
+              headerStyle: {backgroundColor: '#27343c', elevation: 0},
+              headerTintColor: '#d2d2d8',
+            }}
+            component={Contact}
+          />
           <Stack.Screen
             options={{
               headerStyle: {backgroundColor: '#27343c'},
@@ -166,7 +174,7 @@ export default function Main({navigation}) {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.navigationFriend}
+                    style={styles.navigationFriend2}
                     onPress={() =>
                       navigation.navigate('FriendInfo', {
                         data: route.params.data,
@@ -205,9 +213,7 @@ export default function Main({navigation}) {
                 <View style={styles.headerFriendInfo}>
                   <TouchableOpacity
                     style={styles.icon}
-                    onPress={() =>
-                      navigation.reset({index: 1, routes: [{name: 'ChatRoom'}]})
-                    }>
+                    onPress={() => navigation.navigate('ChatRoom')}>
                     <Icon2 name="arrow-left" size={30} color="white" />
                   </TouchableOpacity>
                   <View style={styles.firendInfoWrapper}>
@@ -267,6 +273,10 @@ const styles = StyleSheet.create({
   },
   navigationFriend: {
     flexDirection: 'row',
+    marginLeft: 10,
+  },
+  navigationFriend2: {
+    flexDirection: 'row',
   },
   userInfo: {
     display: 'flex',
@@ -286,6 +296,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 10,
   },
   firendInfoWrapper: {
     display: 'flex',

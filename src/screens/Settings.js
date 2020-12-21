@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
+  ScrollView,
   TouchableOpacity,
 } from 'react-native';
 import {Thumbnail} from 'native-base';
@@ -13,13 +13,20 @@ import {useSelector} from 'react-redux';
 import {API_URL} from '@env';
 
 export default function Settings({navigation}) {
-  const user = useSelector((state) => state.userInfo.data.data);
+  const user = useSelector((state) => state.getuser.user);
   return (
-    <SafeAreaView style={styles.parent}>
+    <ScrollView style={styles.parent}>
       <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
         <View style={styles.profileWrapper}>
           <View>
-            <Thumbnail large source={{uri: `${API_URL}${user.avatar}`}} />
+            <Thumbnail
+              large
+              source={
+                user.avatar !== null
+                  ? {uri: `${API_URL}${user.avatar}`}
+                  : require('../assets/img/default_user.png')
+              }
+            />
           </View>
           <View style={styles.userView}>
             <Text style={styles.userText}>{user.username}</Text>
@@ -92,7 +99,7 @@ export default function Settings({navigation}) {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
