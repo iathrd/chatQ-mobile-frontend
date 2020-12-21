@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        isLogin: false,
+        isLogin: true,
         isError: false,
         token: action.payload.data.token,
       };

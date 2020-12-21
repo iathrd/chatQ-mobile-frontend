@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,17 +16,24 @@ export default function Register({navigation}) {
   const [dialog, setDialog] = useState(false);
   const [phoneFormat, setPhoneFormat] = useState('+62');
   const [phone, setPhone] = useState('');
+  const isLogin = useSelector((state) => state.auth.isLogin);
   const handleDialog = () => {
     setDialog(!dialog);
   };
+
+  useEffect(() => {
+    if (token.length) {
+      dispatch(getUserAction.getUser(token));
+      navigation.navigate('OTP', {data: phone});
+    }
+  }, [token]);
+
   const handleMove = (form) => {
+    setDialog(false);
     const data = phoneFormat.concat(form.phone);
-    console.log(data);
+    setPhone(data)
     dispatch(loginAction.doLogin(data));
     if (token.length) {
-      setDialog(false);
-      dispatch(getUserAction.getUser(token));
-      navigation.navigate('OTP', {data: data});
     }
   };
 
