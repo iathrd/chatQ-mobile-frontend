@@ -3,6 +3,7 @@ const initialState = {
   token: '',
   isLoading: false,
   isError: false,
+  isSuccess: false,
   alertMsg: '',
 };
 
@@ -13,6 +14,7 @@ export default (state = initialState, action) => {
         ...state,
         isLoading: true,
         isError: false,
+        isSuccess:false,
         alertMsg: 'Login ...',
       };
     }
@@ -21,6 +23,7 @@ export default (state = initialState, action) => {
         ...state,
         isLoading: false,
         isLoginn: true,
+        isSuccess:true,
         isError: false,
       };
     }
@@ -28,6 +31,33 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isError: true,
+        isSuccess:false,
+        alertMsg: 'Wrong email or password',
+      };
+    }
+
+    case 'CREATE_AVATAR_PENDING': {
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+        isSuccess:false,
+        alertMsg: 'Login ...',
+      };
+    }
+    case 'CREATE_AVATAR_FULFILLED': {
+      return {
+        ...state,
+        isLoading: false,
+        isSuccess: true,
+        isError: false,
+      };
+    }
+    case 'CREATE_AVATAR_REJECTED': {
+      return {
+        ...state,
+        isError: true,
+        isSuccess:false,
         alertMsg: 'Wrong email or password',
       };
     }

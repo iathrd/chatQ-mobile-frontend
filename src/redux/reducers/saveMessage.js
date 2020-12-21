@@ -1,6 +1,7 @@
 const initialState = {
   data: {data:[]},
   isLoading: false,
+  isSuccess:false,
   isError: false,
   alertMsg: '',
 };
@@ -10,9 +11,9 @@ export default (state = initialState, action) => {
     case 'SAVE_MESSAGE': {
       return {
         ...state,
-        isLoading: true,
         isError: false,
         data: action.payload,
+        isSuccess:true,
         alertMsg: 'Loading ...',
       };
     }
